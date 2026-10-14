@@ -102,11 +102,29 @@
   nav.innerHTML = '<button type="button" data-d="-1">&#8592; Prev</button><button type="button" data-d="1">Next &#8594;</button>';
   menu.appendChild(nav);
 
+  /* grizzlyinsulationco.com blocks images requested from other sites (hotlink protection).
+     The page file itself is not changed: it is loaded as-is and shown with a
+     no-referrer policy so the live-site images load the same way they do on the real site. */
+  var blobUrl = null;
+  function load(file, i) {
+    fetch(file).then(function (r) {
+      if (!r.ok) throw 0;
+      return r.text();
+    }).then(function (html) {
+      if (i !== idx) return;
+      html = html.replace(/<head(\s[^>]*)?>/i, function (m) { return m + '<meta name="referrer" content="no-referrer">'; });
+      var old = blobUrl;
+      blobUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+      frame.src = blobUrl;
+      if (old) setTimeout(function () { URL.revokeObjectURL(old); }, 5000);
+    }).catch(function () { if (i === idx) frame.src = file; });
+  }
+
   function show(i) {
     i = (i + PAGES.length) % PAGES.length;
     if (i === idx) return;
     idx = i;
-    frame.src = PAGES[i][0] + ".html";
+    load(PAGES[i][0] + ".html", i);
     cur.textContent = PAGES[i][1];
     var links = menu.querySelectorAll("a");
     for (var k = 0; k < links.length; k++) links[k].className = k === i ? "on" : "";
