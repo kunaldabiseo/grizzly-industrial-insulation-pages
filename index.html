@@ -35,10 +35,8 @@
   #ps-nav button:hover { background: #e3e8ec; }
   @media (max-width: 640px) {
     #ps { left: 12px; bottom: 92px; }
+    #ps-cur { max-width: 150px; }
     #ps-menu { width: min(300px, calc(100vw - 24px)); }
-    /* phones: icon-only so the switcher does not sit on the page text; the name stays for screen readers */
-    #ps-btn { width: 44px; padding: 0; justify-content: center; }
-    #ps-cur { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   }
 </style>
 </head>
